@@ -1,64 +1,75 @@
-# Incremental Sales & Customer Analysis (Power BI)
+# Mirrored Real-Time Sales Analysis Dashboard
 
-A single-page **Power BI** dashboard for analyzing **sales performance** and **customer/product behavior**.  
-It’s built on a simple **star schema** (FactSales + Dimensions) and designed for quick, interactive decision-making.
+A **real-time, zero-latency** sales analytics dashboard built with **Microsoft Fabric Mirroring + DirectLake** and visualized in **Power BI**.  
+The goal is to monitor sales, products, profitability, and regional performance **without scheduled refreshes**—changes in the source system are reflected automatically.
 
 ---
 
 ## Dashboard Preview
 
-![Sales Analysis Dashboard](Images/Project(Sales).jpg)
+![Real Time Sales Analysis](Mirrored%20Real%20Time%20Sales%20Analysis%20Dashboard_page-0001.jpg)
 
 ---
 
-## What This Dashboard Answers
+## Objective
 
-- How are **sales trending over time** (monthly/periodic patterns)?
-- Which **regions** drive the most revenue?
-- Which **product categories** generate the most **sales vs quantity**?
-- How many **customers**, **orders**, and **distinct products sold** are involved?
-- What are the top/lowest performing segments after applying filters?
-
----
-
-## Key KPIs (from the included dataset)
-
-- **Total Sales:** ~50.08M  
-- **Total Quantity Sold:** ~550K  
-- **Total Orders:** ~100K  
-- **Total Customers (active):** 144  
-- **Total Sold Products (distinct):** 63  
-- **Avg Sales per Customer:** ~347.77K  
-- **Last Data Update:** 2025-08-28
-
-> Note: “Avg Sales per Customer” = Total Sales / Active Customers.
+Deliver a modern sales reporting solution that:
+- updates in **near real-time** (no manual refresh),
+- reduces ETL/refresh complexity,
+- enables quick decisions for business teams using a single interactive report. :contentReference[oaicite:1]{index=1}
 
 ---
 
-## Dataset (CSV)
+## Technical Architecture
 
-All data files are included in [`Database/`](Database):
-
-- `Database/FactSales.csv` — transactions (SaleID, CustomerID, ProductID, DateID, Quantity, LastUpdatedTime)
-- `Database/DimProducts.csv` — product master (Category, UnitPrice, etc.)
-- `Database/DimCustomers.csv` — customer info (Region, etc.)
-- `Database/DimDates.csv` — date table (calendar & fiscal attributes)
-
-**Date range covered:**
-- Date table: **2024-01-01 → 2025-12-31**
-- Fact sales: **2024-01-01 → 2025-08-27**
+**Source → Mirror → Model → Report**
+- **Source System:** Azure SQL Database (live transactional sales)
+- **Mirroring Layer:** Microsoft Fabric (Mirrored SQL Database)
+- **Semantic Model:** DirectLake (Fabric)
+- **Reporting:** Power BI Desktop + Power BI Service
+- **Refresh Method:** Real-time synchronization (no scheduled refresh) :contentReference[oaicite:2]{index=2}
 
 ---
 
-## Data Model (Star Schema)
+## What the Dashboard Covers
 
-**Relationships**
-- `FactSales[CustomerID]` → `DimCustomers[CustomerID]`
-- `FactSales[ProductID]` → `DimProducts[ProductID]`
-- `FactSales[DateID]` → `DimDates[Date]`
+### KPI Panel (Live)
+- Total Sales
+- Total Orders
+- Total Quantity
+- Profit Margin %
+- Profit
+- Min Sales ID
 
-This structure enables fast slicing by **time**, **region**, and **category**.
+### Visual Insights
+- **Top products by sales**
+- **Sales by payment method**
+- **Sales & profit trend by month**
+- **Sales by category**
+- **Sales by region**
+- Filters for **date range** and **order type** :contentReference[oaicite:3]{index=3}
 
 ---
 
- 
+## Included Sample Dataset (Local Demo)
+
+This repo includes a sample dataset you can use without Fabric:
+
+**File:** `BurgerSales.csv`  
+**Rows:** 10,000  
+**Date Range:** 2024-01-01 → 2024-12-31  
+
+**Columns**
+- SalesID, Date, Store, Region, Product, Category  
+- QuantitySold, UnitPrice, UnitMakingCost  
+- PaymentMethod, OrderType
+
+### Sample totals (from `BurgerSales.csv`)
+- Total Sales: ~498.98K  
+- Total Orders: 10,000  
+- Total Quantity: ~55.17K  
+- Profit: ~377.31K  
+- Profit Margin: ~75.62%
+
+---
+
